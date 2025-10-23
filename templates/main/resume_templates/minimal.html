@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ resume.title }} - Resume</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+        }
+        
+        .resume-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            background: white;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .name {
+            font-size: 2.8rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        
+        .contact-info {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .contact-item {
+            display: inline-block;
+            margin: 0 15px;
+        }
+        
+        .summary {
+            font-size: 1.1rem;
+            color: #555;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        
+        .section {
+            margin-bottom: 35px;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        
+        .experience-item, .education-item {
+            margin-bottom: 25px;
+        }
+        
+        .job-title, .degree {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .company, .institution {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .dates {
+            font-size: 0.9rem;
+            color: #999;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            color: #555;
+            line-height: 1.7;
+        }
+        
+        .skills-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .skills-list li {
+            background: #f8f9fa;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .project-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 5px;
+        }
+        
+        .project-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .project-tech {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+        
+        .project-links {
+            margin-top: 10px;
+        }
+        
+        .project-links a {
+            color: #333;
+            text-decoration: none;
+            margin-right: 20px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 2px;
+        }
+        
+        .project-links a:hover {
+            border-bottom-color: #666;
+        }
+        
+        @media print {
+            .resume-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="resume-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="name">{{ personal_info.first_name }} {{ personal_info.last_name }}</div>
+            <div class="contact-info">
+                {% if personal_info.email %}
+                <span class="contact-item">{{ personal_info.email }}</span>
+                {% endif %}
+                {% if personal_info.phone %}
+                <span class="contact-item">{{ personal_info.phone }}</span>
+                {% endif %}
+                {% if personal_info.linkedin %}
+                <span class="contact-item">{{ personal_info.linkedin }}</span>
+                {% endif %}
+                {% if personal_info.website %}
+                <span class="contact-item">{{ personal_info.website }}</span>
+                {% endif %}
+            </div>
+            {% if personal_info.address or personal_info.city or personal_info.state %}
+            <div class="contact-info">
+                {% if personal_info.address %}
+                <span class="contact-item">{{ personal_info.address }}</span>
+                {% endif %}
+                {% if personal_info.city or personal_info.state %}
+                <span class="contact-item">
+                    {% if personal_info.city %}{{ personal_info.city }}{% endif %}
+                    {% if personal_info.city and personal_info.state %}, {% endif %}
+                    {% if personal_info.state %}{{ personal_info.state }}{% endif %}
+                    {% if personal_info.zip_code %} {{ personal_info.zip_code }}{% endif %}
+                </span>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if personal_info.summary %}
+            <div class="summary">{{ personal_info.summary }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Experience -->
+        {% if experiences %}
+        <div class="section">
+            <div class="section-title">Experience</div>
+            {% for experience in experiences %}
+            <div class="experience-item">
+                <div class="job-title">{{ experience.position }}</div>
+                <div class="company">{{ experience.company }}</div>
+                <div class="dates">
+                    {{ experience.start_date|date:"M Y" }} - 
+                    {% if experience.current %}Present{% else %}{{ experience.end_date|date:"M Y" }}{% endif %}
+                    {% if experience.location %} | {{ experience.location }}{% endif %}
+                </div>
+                <div class="description">{{ experience.description }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Education -->
+        {% if education %}
+        <div class="section">
+            <div class="section-title">Education</div>
+            {% for edu in education %}
+            <div class="education-item">
+                <div class="degree">{{ edu.degree }}</div>
+                <div class="institution">{{ edu.institution }}</div>
+                <div class="dates">
+                    {{ edu.start_date|date:"M Y" }} - 
+                    {% if edu.current %}Present{% else %}{{ edu.end_date|date:"M Y" }}{% endif %}
+                    {% if edu.location %} | {{ edu.location }}{% endif %}
+                </div>
+                {% if edu.field_of_study or edu.gpa or edu.description %}
+                <div class="description">
+                    {% if edu.field_of_study %}{{ edu.field_of_study }}{% endif %}
+                    {% if edu.gpa %} • GPA: {{ edu.gpa }}{% endif %}
+                    {% if edu.description %}<br>{{ edu.description }}{% endif %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Skills -->
+        {% if skills %}
+        <div class="section">
+            <div class="section-title">Skills</div>
+            <ul class="skills-list">
+                {% for skill in skills %}
+                <li>{{ skill.name }} ({{ skill.get_level_display }})</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Projects -->
+        {% if projects %}
+        <div class="section">
+            <div class="section-title">Projects</div>
+            {% for project in projects %}
+            <div class="project-item">
+                <div class="project-title">{{ project.title }}</div>
+                {% if project.technologies %}
+                <div class="project-tech">{{ project.technologies }}</div>
+                {% endif %}
+                <div class="description">{{ project.description }}</div>
+                {% if project.url or project.github_url %}
+                <div class="project-links">
+                    {% if project.url %}<a href="{{ project.url }}" target="_blank">Live Demo</a>{% endif %}
+                    {% if project.github_url %}<a href="{{ project.github_url }}" target="_blank">GitHub</a>{% endif %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

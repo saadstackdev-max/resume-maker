@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold">{{ title }}</h1>
+                <p class="lead text-muted">Start building your professional resume</p>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">
+                                <i class="fas fa-file-alt me-2"></i>Resume Title
+                            </label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.title.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">Give your resume a descriptive name (e.g., "Software Engineer Resume", "Marketing Manager Resume")</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.template.id_for_label }}" class="form-label fw-bold">
+                                <i class="fas fa-palette me-2"></i>Choose Template
+                            </label>
+                            {{ form.template }}
+                            {% if form.template.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.template.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% if selected_template %}
+                                <div class="form-text">Selected template: <strong>{{ selected_template|capfirst }}</strong></div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Template Preview -->
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-3">Template Preview:</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="card border-primary template-preview" data-template="modern">
+                                        <div class="card-body text-center">
+                                            <div class="bg-primary text-white rounded p-3 mb-2">
+                                                <i class="fas fa-rocket"></i>
+                                            </div>
+                                            <h6>Modern</h6>
+                                            <p class="small text-muted">Clean and professional</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-secondary template-preview" data-template="classic">
+                                        <div class="card-body text-center">
+                                            <div class="bg-secondary text-white rounded p-3 mb-2">
+                                                <i class="fas fa-graduation-cap"></i>
+                                            </div>
+                                            <h6>Classic</h6>
+                                            <p class="small text-muted">Traditional format</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-warning template-preview" data-template="creative">
+                                        <div class="card-body text-center">
+                                            <div class="bg-warning text-white rounded p-3 mb-2">
+                                                <i class="fas fa-paint-brush"></i>
+                                            </div>
+                                            <h6>Creative</h6>
+                                            <p class="small text-muted">Stand out design</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-info template-preview" data-template="minimal">
+                                        <div class="card-body text-center">
+                                            <div class="bg-info text-white rounded p-3 mb-2">
+                                                <i class="fas fa-minus"></i>
+                                            </div>
+                                            <h6>Minimal</h6>
+                                            <p class="small text-muted">Simple and clean</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-plus me-2"></i>Create Resume
+                            </button>
+                            <a href="{% url 'main:dashboard' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mt-5">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card border-primary">
+                            <div class="card-body text-center">
+                                <i class="fas fa-lightbulb text-primary mb-3" style="font-size: 2rem;"></i>
+                                <h6>Pro Tip</h6>
+                                <p class="small text-muted">Choose a template that matches your industry and experience level.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-success">
+                            <div class="card-body text-center">
+                                <i class="fas fa-clock text-success mb-3" style="font-size: 2rem;"></i>
+                                <h6>Quick Setup</h6>
+                                <p class="small text-muted">You can always change the template later in the editor.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-info">
+                            <div class="card-body text-center">
+                                <i class="fas fa-edit text-info mb-3" style="font-size: 2rem;"></i>
+                                <h6>Easy Editing</h6>
+                                <p class="small text-muted">Fill in your information step by step in the editor.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const templateSelect = document.getElementById('{{ form.template.id_for_label }}');
+    const templatePreviews = document.querySelectorAll('.template-preview');
+    
+    // Function to update template preview selection
+    function updateTemplateSelection() {
+        const selectedTemplate = templateSelect.value;
+        
+        templatePreviews.forEach(preview => {
+            preview.classList.remove('border-primary', 'border-secondary', 'border-warning', 'border-info');
+            preview.classList.add('border-secondary');
+            
+            if (preview.dataset.template === selectedTemplate) {
+                preview.classList.remove('border-secondary');
+                preview.classList.add('border-primary');
+            }
+        });
+    }
+    
+    // Update on page load
+    updateTemplateSelection();
+    
+    // Update when template selection changes
+    templateSelect.addEventListener('change', updateTemplateSelection);
+    
+    // Click on template preview to select it
+    templatePreviews.forEach(preview => {
+        preview.addEventListener('click', function() {
+            const template = this.dataset.template;
+            templateSelect.value = template;
+            updateTemplateSelection();
+        });
+    });
+});
+</script>
+
+<style>
+.template-preview {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.template-preview:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.template-preview.border-primary {
+    border-width: 2px !important;
+}
+</style>
+{% endblock %}

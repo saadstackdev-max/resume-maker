@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ resume.title }} - Custom</title>
+<style>
+:root{
+  --primary: {{ resume.color_primary|default:'#0d6efd' }};
+  --secondary: {{ resume.color_secondary|default:'#6c757d' }};
+  --accent: {{ resume.color_accent|default:'#6610f2' }};
+  --bg: {{ resume.color_bg|default:'#ffffff' }};
+  --text: {{ resume.color_text|default:'#212529' }};
+  --font: {{ resume.font_family|default:'Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif' }};
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text)}
+.container{max-width:860px;margin:0 auto;padding:40px}
+.header{display:flex;gap:16px;align-items:center;border-bottom:3px solid var(--primary);padding-bottom:14px;margin-bottom:18px}
+.name{font-size:36px;color:var(--primary);font-weight:800}
+.photo{width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid var(--primary)}
+.sec{margin:20px 0}
+.sec h2{font-size:16px;text-transform:uppercase;letter-spacing:1px;color:var(--primary);border-bottom:1px solid #e5e7eb;padding-bottom:6px}
+.badge{display:inline-block;background:color-mix(in oklab, var(--primary) 15%, white);color:var(--primary);padding:6px 10px;border-radius:999px;margin:4px 6px 0 0}
+.muted{color:color-mix(in oklab, var(--text) 60%, white)}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    {% if personal_info.photo_url %}<img src="{{ personal_info.photo_url }}" class="photo" alt="photo"/>{% endif %}
+    <div>
+      <div class="name">{{ personal_info.first_name }} {{ personal_info.last_name }}</div>
+      <div class="muted">{% if personal_info.email %}{{ personal_info.email }} · {% endif %}{% if personal_info.phone %}{{ personal_info.phone }}{% endif %}</div>
+      {% if personal_info.summary %}<div class="muted" style="margin-top:6px">{{ personal_info.summary }}</div>{% endif %}
+    </div>
+  </div>
+  <div class="sec"><h2>Experience</h2>
+    {% for e in experiences %}
+    <div style="margin:10px 0"><strong>{{ e.position }}</strong> — <span class="muted">{{ e.company }}</span><div class="muted">{{ e.start_date|date:"M Y" }} – {% if e.current %}Present{% else %}{{ e.end_date|date:"M Y" }}{% endif %}{% if e.location %} · {{ e.location }}{% endif %}</div><div>{{ e.description }}</div></div>
+    {% endfor %}
+  </div>
+  <div class="sec"><h2>Education</h2>
+    {% for ed in education %}
+    <div style="margin:6px 0"><strong>{{ ed.degree }}</strong> — <span class="muted">{{ ed.institution }}</span></div>
+    {% endfor %}
+  </div>
+  <div class="sec"><h2>Skills</h2>
+    {% for s in skills %}<span class="badge">{{ s.name }}</span>{% endfor %}
+  </div>
+  <div class="sec"><h2>Projects</h2>
+    {% for p in projects %}
+    <div style="margin:10px 0"><strong>{{ p.title }}</strong>{% if p.technologies %} — <span class="muted">{{ p.technologies }}</span>{% endif %}<div>{{ p.description }}</div></div>
+    {% endfor %}
+  </div>
+</div>
+</body>
+</html>

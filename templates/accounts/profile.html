@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-4">
+            <!-- User Profile Card -->
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-user-circle text-primary" style="font-size: 4rem;"></i>
+                    </div>
+                    <h4 class="card-title">{{ user.username }}</h4>
+                    <p class="text-muted">Member since {{ user.date_joined|date:"M Y" }}</p>
+                    
+                    <div class="row text-center mt-4">
+                        <div class="col-6">
+                            <h5 class="text-primary">{{ user_resumes.count }}</h5>
+                            <small class="text-muted">Resumes</small>
+                        </div>
+                        <div class="col-6">
+                            <h5 class="text-success">{{ user.date_joined|timesince }}</h5>
+                            <small class="text-muted">Member</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'main:create_resume' %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Create New Resume
+                        </a>
+                        <a href="{% url 'main:templates' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-palette me-2"></i>Browse Templates
+                        </a>
+                        <a href="{% url 'main:dashboard' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <!-- User's Resumes -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-file-alt me-2"></i>My Resumes
+                    </h5>
+                    <a href="{% url 'main:create_resume' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i>Create New
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if user_resumes %}
+                        <div class="row g-3">
+                            {% for resume in user_resumes %}
+                            <div class="col-md-6">
+                                <div class="card border h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h6 class="card-title mb-0">{{ resume.title }}</h6>
+                                            <span class="badge bg-primary">{{ resume.get_template_display }}</span>
+                                        </div>
+                                        <p class="text-muted small mb-3">
+                                            <i class="fas fa-clock me-1"></i>
+                                            Last updated: {{ resume.updated_at|timesince }} ago
+                                        </p>
+                                        <div class="d-flex gap-2">
+                                            <a href="{% url 'main:view_resume' resume.id %}" class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-eye me-1"></i>View
+                                            </a>
+                                            <a href="{% url 'main:edit_resume' resume.id %}" class="btn btn-outline-success btn-sm">
+                                                <i class="fas fa-edit me-1"></i>Edit
+                                            </a>
+                                            <a href="{% url 'main:delete_resume' resume.id %}" class="btn btn-outline-danger btn-sm">
+                                                <i class="fas fa-trash me-1"></i>Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-file-alt text-muted mb-3" style="font-size: 3rem;"></i>
+                            <h5 class="text-muted">No resumes yet</h5>
+                            <p class="text-muted">Create your first professional resume to get started.</p>
+                            <a href="{% url 'main:create_resume' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Create Your First Resume
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Account Statistics -->
+            {% if user_resumes %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Account Statistics
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="border rounded p-3">
+                                <h4 class="text-primary">{{ user_resumes.count }}</h4>
+                                <small class="text-muted">Total Resumes</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border rounded p-3">
+                                <h4 class="text-success">{{ user_resumes.count }}</h4>
+                                <small class="text-muted">Active Resumes</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border rounded p-3">
+                                <h4 class="text-info">{{ user_resumes.count }}</h4>
+                                <small class="text-muted">Templates Used</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border rounded p-3">
+                                <h4 class="text-warning">{{ user.date_joined|timesince }}</h4>
+                                <small class="text-muted">Member Since</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

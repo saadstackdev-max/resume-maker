@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Create Professional Resumes</h1>
+                <p class="lead mb-4">Build stunning resumes with our professional templates. Stand out from the crowd and land your dream job with our easy-to-use resume builder.</p>
+                <div class="d-flex gap-3">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'main:create_resume' %}" class="btn btn-light btn-lg">
+                            <i class="fas fa-plus me-2"></i>Create Resume
+                        </a>
+                        <a href="{% url 'main:dashboard' %}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-tachometer-alt me-2"></i>My Dashboard
+                        </a>
+                    {% else %}
+                        <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Get Started
+                        </a>
+                        <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="fas fa-file-alt" style="font-size: 200px; opacity: 0.3;"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-6 fw-bold">Why Choose Resume Maker?</h2>
+                <p class="lead text-muted">Professional templates designed to help you succeed</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 text-center p-4">
+                    <div class="card-body">
+                        <i class="fas fa-palette text-primary mb-3" style="font-size: 3rem;"></i>
+                        <h5 class="card-title">Beautiful Templates</h5>
+                        <p class="card-text">Choose from multiple professional templates designed to impress hiring managers.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 text-center p-4">
+                    <div class="card-body">
+                        <i class="fas fa-edit text-success mb-3" style="font-size: 3rem;"></i>
+                        <h5 class="card-title">Easy to Edit</h5>
+                        <p class="card-text">Simple drag-and-drop interface makes it easy to customize your resume content.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 text-center p-4">
+                    <div class="card-body">
+                        <i class="fas fa-download text-info mb-3" style="font-size: 3rem;"></i>
+                        <h5 class="card-title">Download & Share</h5>
+                        <p class="card-text">Export your resume as PDF and share it with potential employers instantly.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Templates Preview Section -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-6 fw-bold">Professional Templates</h2>
+                <p class="lead text-muted">Choose the perfect template for your industry and experience level</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="bg-primary text-white rounded p-3 mb-3">
+                            <i class="fas fa-rocket" style="font-size: 2rem;"></i>
+                        </div>
+                        <h5 class="card-title">Modern</h5>
+                        <p class="card-text small">Clean and professional design with modern typography</p>
+                        <a href="{% url 'main:templates' %}" class="btn btn-outline-primary btn-sm">View Template</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="bg-success text-white rounded p-3 mb-3">
+                            <i class="fas fa-graduation-cap" style="font-size: 2rem;"></i>
+                        </div>
+                        <h5 class="card-title">Classic</h5>
+                        <p class="card-text small">Traditional format with timeless appeal</p>
+                        <a href="{% url 'main:templates' %}" class="btn btn-outline-success btn-sm">View Template</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="bg-warning text-white rounded p-3 mb-3">
+                            <i class="fas fa-paint-brush" style="font-size: 2rem;"></i>
+                        </div>
+                        <h5 class="card-title">Creative</h5>
+                        <p class="card-text small">Stand out with a creative and unique design</p>
+                        <a href="{% url 'main:templates' %}" class="btn btn-outline-warning btn-sm">View Template</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="bg-info text-white rounded p-3 mb-3">
+                            <i class="fas fa-minus" style="font-size: 2rem;"></i>
+                        </div>
+                        <h5 class="card-title">Minimal</h5>
+                        <p class="card-text small">Simple and clean design focusing on content</p>
+                        <a href="{% url 'main:templates' %}" class="btn btn-outline-info btn-sm">View Template</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <i class="fas fa-users text-primary" style="font-size: 2.5rem;"></i>
+                </div>
+                <h3 class="fw-bold">10,000+</h3>
+                <p class="text-muted">Resumes Created</p>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <i class="fas fa-palette text-success" style="font-size: 2.5rem;"></i>
+                </div>
+                <h3 class="fw-bold">4</h3>
+                <p class="text-muted">Professional Templates</p>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <i class="fas fa-clock text-info" style="font-size: 2.5rem;"></i>
+                </div>
+                <h3 class="fw-bold">5 Min</h3>
+                <p class="text-muted">Average Creation Time</p>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <i class="fas fa-star text-warning" style="font-size: 2.5rem;"></i>
+                </div>
+                <h3 class="fw-bold">4.9/5</h3>
+                <p class="text-muted">User Rating</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- User Resumes Section (if logged in) -->
+{% if user.is_authenticated and user.resume_set.all %}
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-6 fw-bold">Your Resumes</h2>
+                <p class="lead text-muted">Manage and edit your professional resumes</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            {% for resume in user.resume_set.all|slice:":3" %}
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title mb-0">{{ resume.title }}</h5>
+                            <span class="badge bg-primary">{{ resume.get_template_display }}</span>
+                        </div>
+                        <p class="text-muted small mb-3">
+                            <i class="fas fa-clock me-1"></i>
+                            Last updated: {{ resume.updated_at|timesince }} ago
+                        </p>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'main:view_resume' resume.id %}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-eye me-1"></i>View
+                            </a>
+                            <a href="{% url 'main:edit_resume' resume.id %}" class="btn btn-outline-success btn-sm">
+                                <i class="fas fa-edit me-1"></i>Edit
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if user.resume_set.count > 3 %}
+        <div class="text-center mt-4">
+            <a href="{% url 'main:dashboard' %}" class="btn btn-primary">
+                <i class="fas fa-tachometer-alt me-2"></i>View All Resumes
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container text-center">
+        <h2 class="mb-4">Ready to Create Your Professional Resume?</h2>
+        <p class="lead mb-4">Join thousands of professionals who have landed their dream jobs with our resume builder.</p>
+        {% if user.is_authenticated %}
+            <a href="{% url 'main:create_resume' %}" class="btn btn-light btn-lg">
+                <i class="fas fa-plus me-2"></i>Start Creating Now
+            </a>
+        {% else %}
+            <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg">
+                <i class="fas fa-user-plus me-2"></i>Sign Up & Start Creating
+            </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

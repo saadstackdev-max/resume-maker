@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="container-fluid py-3">
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-editor" type="button">Editor</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-history" type="button">History</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-colors" type="button">Color Hover Tool</button></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane fade show active" id="tab-editor">
+      <div class="row g-3 mt-1">
+        <div class="col-lg-5">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title mb-3"><i class="fas fa-sliders-h me-2"></i>Editor</h5>
+              <form method="post" class="mb-3">
+                {% csrf_token %}
+                <div class="row g-2">
+                  <div class="col-7">{{ form.title.label_tag }}{{ form.title }}</div>
+                  <div class="col-5">{{ form.template.label_tag }}{{ form.template }}</div>
+                </div>
+                <div class="form-check mt-2">{{ form.use_custom_theme }} <label class="form-check-label">Use custom theme</label></div>
+                <div class="row g-2 mt-1">
+                  <div class="col-4"><label class="form-label small">Primary</label>{{ form.color_primary }}</div>
+                  <div class="col-4"><label class="form-label small">Secondary</label>{{ form.color_secondary }}</div>
+                  <div class="col-4"><label class="form-label small">Accent</label>{{ form.color_accent }}</div>
+                  <div class="col-4"><label class="form-label small">Background</label>{{ form.color_bg }}</div>
+                  <div class="col-4"><label class="form-label small">Text</label>{{ form.color_text }}</div>
+                  <div class="col-8"><label class="form-label small">Font family</label>{{ form.font_family }}</div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2"><i class="fas fa-save me-1"></i>Save</button>
+                <a href="{% url 'main:export_resume_pdf' resume.id %}" class="btn btn-outline-success mt-2"><i class="fas fa-download me-1"></i>PDF</a>
+              </form>
+
+              <h6 class="mt-3"><i class="fas fa-user me-2"></i>Personal Info</h6>
+              <form id="pi-form" class="mb-3">
+                {% csrf_token %}
+                <div class="row g-2">
+                  <div class="col-6"><input class="form-control" name="first_name" placeholder="First name" value="{{ personal_info.first_name|default:'' }}"></div>
+                  <div class="col-6"><input class="form-control" name="last_name" placeholder="Last name" value="{{ personal_info.last_name|default:'' }}"></div>
+                  <div class="col-6"><input class="form-control" name="email" placeholder="Email" value="{{ personal_info.email|default:'' }}"></div>
+                  <div class="col-6"><input class="form-control" name="phone" placeholder="Phone" value="{{ personal_info.phone|default:'' }}"></div>
+                  <div class="col-12"><input class="form-control" name="photo_url" placeholder="Photo URL" value="{{ personal_info.photo_url|default:'' }}"></div>
+                  <div class="col-12"><textarea class="form-control" name="summary" rows="3" placeholder="Professional summary">{{ personal_info.summary|default:'' }}</textarea></div>
+                </div>
+                <button class="btn btn-outline-primary mt-2" id="pi-save" type="button"><i class="fas fa-save me-1"></i>Save Personal Info</button>
+              </form>
+
+              {% if suggestions %}
+              <div class="alert alert-info"><i class="fas fa-lightbulb me-2"></i>
+                <ul class="mb-0">
+                  {% for s in suggestions %}<li>{{ s }}</li>{% endfor %}
+                </ul>
+              </div>
+              {% endif %}
+
+              <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addExperienceModal">Add Experience</button>
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addEducationModal">Add Education</button>
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addSkillModal">Add Skill</button>
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addProjectModal">Add Project</button>
+              </div>
+            </div>
+          </div>
+
+          {% include 'main/_modals.html' %}
+        </div>
+
+        <div class="col-lg-7">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title mb-3"><i class="fas fa-eye me-2"></i>Live Preview</h5>
+              <iframe id="preview-frame" src="{% url 'main:view_resume' resume.id %}" style="width:100%;height:75vh;border:1px solid #eee;border-radius:6px"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tab-history">
+      <div class="container py-3">
+        {% if resume.history %}
+        <ul class="list-group">
+          {% for entry in resume.history|slice:':100' %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <strong>{{ entry.event }}</strong>
+              <div class="text-muted small">by {{ entry.by }} · {{ entry.ts }}</div>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="alert alert-secondary">No history yet. Changes you make will appear here.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tab-colors">
+      <div class="container py-3">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Hover Color Inspector</h5>
+                <p class="text-muted">Hover the squares below; we will display the hex code of the color under your cursor.</p>
+                <div id="swatches" class="d-flex flex-wrap" style="gap:8px">
+                  <div class="sw" style="width:42px;height:42px;background:#0d6efd"></div>
+                  <div class="sw" style="width:42px;height:42px;background:#6610f2"></div>
+                  <div class="sw" style="width:42px;height:42px;background:#6f42c1"></div>
+                  <div class="sw" style="width:42px;height:42px;background:#198754"></div>
+                  <div class="sw" style="width:42px;height:42px;background:#dc3545"></div>
+                  <div class="sw" style="width:42px;height:42px;background:#fd7e14"></div>
+                  <div class="sw" style="width:42px;height:42px;background:#20c997"></div>
+                  <div class="sw" style="width:42px;height:42px;background:#0dcaf0"></div>
+                  <div class="sw" style="width:42px;height:42px;background:#212529"></div>
+                  <div class="sw" style="width:42px;height:42px;background:#6c757d"></div>
+                </div>
+                <div class="mt-3">
+                  <span class="text-muted">Hover color:</span>
+                  <code id="hover-hex">—</code>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Pick From Preview</h5>
+                <p class="text-muted">Hover the preview area; we’ll estimate the nearest CSS color on hover (approximate).</p>
+                <button id="enable-preview-hover" class="btn btn-outline-primary btn-sm">Enable Preview Hover</button>
+                <div class="mt-2"><span class="text-muted">Detected:</span> <code id="preview-hex">—</code></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Image Color Picker (Exact)</h5>
+                <p class="text-muted">Upload an image and hover over it to get the exact pixel color (hex).</p>
+                <div class="row g-2 align-items-center">
+                  <div class="col-md-6">
+                    <input type="file" id="img-file" accept="image/*" class="form-control">
+                  </div>
+                  <div class="col-md-6">
+                    <div>Hover color: <code id="img-hex">—</code></div>
+                  </div>
+                </div>
+                <canvas id="img-canvas" style="margin-top:10px;max-width:100%;border:1px solid #eee;border-radius:6px"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function postForm(formId, url) {
+  const form = document.getElementById(formId);
+  const fd = new FormData(form);
+  return fetch(url, {method:'POST', body: fd, headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value}});
+}
+
+// Save PI and refresh preview
+const piBtn = document.getElementById('pi-save');
+piBtn.addEventListener('click', function(){
+  postForm('pi-form', '{% url "main:save_personal_info" resume.id %}').then(()=>{
+    document.getElementById('preview-frame').contentWindow.location.reload();
+  });
+});
+
+// Hook modal forms to reload preview on success
+['add-experience-form','add-education-form','add-skill-form','add-project-form'].forEach(function(id){
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('submit', function(e){
+    e.preventDefault();
+    const fd = new FormData(el);
+    fetch(el.getAttribute('action') || el.dataset.url || el.getAttribute('data-url') || el.dataset.action || '#', {
+      method:'POST', body: fd, headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value}
+    }).then(r=>r.json()).then(()=>{
+      document.getElementById('preview-frame').contentWindow.location.reload();
+    });
+  });
+});
+
+function rgbToHex(r,g,b){return '#' + [r,g,b].map(x=>{const h=x.toString(16);return h.length===1?'0'+h:h}).join('');}
+function cssColorToHex(str){
+  const c=document.createElement('canvas'); c.width=c.height=1; const ctx=c.getContext('2d');
+  ctx.fillStyle=str; ctx.fillRect(0,0,1,1); const d=ctx.getImageData(0,0,1,1).data; return rgbToHex(d[0],d[1],d[2]);
+}
+// Static swatches
+for(const el of document.querySelectorAll('.sw')){
+  el.addEventListener('mousemove',()=>{document.getElementById('hover-hex').textContent = cssColorToHex(getComputedStyle(el).backgroundColor);});
+}
+// Preview hover (approximate: read computed color under iframe body)
+const enableBtn=document.getElementById('enable-preview-hover');
+if(enableBtn){
+  enableBtn.addEventListener('click',()=>{
+    const ifr=document.getElementById('preview-frame');
+    if(!ifr) return;
+    try{
+      const doc=ifr.contentDocument;
+      doc.addEventListener('mousemove', (e)=>{
+        const target=e.target; const cs=getComputedStyle(target);
+        const color = cs.color || cs.backgroundColor; if(!color) return;
+        document.getElementById('preview-hex').textContent = cssColorToHex(color);
+      }, {passive:true});
+      enableBtn.disabled=true; enableBtn.textContent='Hover Enabled';
+    }catch(err){
+      alert('Cannot access preview for hover due to browser security.');
+    }
+  });
+}
+
+// Image upload + pixel-perfect hover
+const fileInput = document.getElementById('img-file');
+const canvas = document.getElementById('img-canvas');
+const imgHex = document.getElementById('img-hex');
+if (fileInput && canvas) {
+  const ctx = canvas.getContext('2d');
+  fileInput.addEventListener('change', (e)=>{
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onload = ()=>{
+        const maxW = canvas.parentElement.clientWidth - 24;
+        const ratio = Math.min(1, maxW / img.width);
+        canvas.width = Math.floor(img.width * ratio);
+        canvas.height = Math.floor(img.height * ratio);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(f);
+  });
+  canvas.addEventListener('mousemove', (e)=>{
+    if (!canvas.width) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.floor((e.clientX - rect.left));
+    const y = Math.floor((e.clientY - rect.top));
+    const d = ctx.getImageData(x, y, 1, 1).data;
+    imgHex.textContent = rgbToHex(d[0], d[1], d[2]);
+  });
+}
+</script>
+{% endblock %}

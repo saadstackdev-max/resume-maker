@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="mb-4">Image ↔ PDF Converter</h1>
+
+  {% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+  {% endif %}
+
+  <ul class="nav nav-tabs" id="convTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="img2pdf-tab" data-bs-toggle="tab" data-bs-target="#img2pdf" type="button" role="tab">Image → PDF</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="pdf2img-tab" data-bs-toggle="tab" data-bs-target="#pdf2img" type="button" role="tab">PDF → Images</button>
+    </li>
+  </ul>
+  <div class="tab-content border border-top-0 p-4" id="convTabsContent">
+    <div class="tab-pane fade show active" id="img2pdf" role="tabpanel">
+      <form method="post" action="{% url 'main:tool_image_to_pdf' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Select images (PNG/JPG)</label>
+          <input type="file" name="images" accept="image/*" class="form-control" multiple required />
+        </div>
+        <button class="btn btn-primary"><i class="fas fa-file-pdf me-2"></i>Convert to PDF</button>
+      </form>
+      <p class="text-muted mt-2">Tip: Order is the selection order; choose files in the sequence you want pages.</p>
+    </div>
+    <div class="tab-pane fade" id="pdf2img" role="tabpanel">
+      <form method="post" action="{% url 'main:tool_pdf_to_images' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-md-8">
+            <label class="form-label">Select PDF</label>
+            <input type="file" name="pdf" accept="application/pdf" class="form-control" required />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Image format</label>
+            <select class="form-select" name="format">
+              <option value="png">PNG</option>
+              <option value="jpg">JPG</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary mt-3"><i class="fas fa-images me-2"></i>Convert to Images (ZIP)</button>
+      </form>
+      <p class="text-muted mt-2">Each PDF page will be exported as an image and bundled in a ZIP file.</p>
+      {% if not fitz %}
+      <div class="alert alert-warning mt-3">PyMuPDF isn't available in the current environment. Please install it to enable PDF → Image conversion.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

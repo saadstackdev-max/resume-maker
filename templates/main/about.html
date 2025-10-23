@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold">{{ title }}</h1>
+                <p class="lead text-muted">Learn more about our Django project</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-info-circle text-primary me-2"></i>
+                                About the Project
+                            </h5>
+                            <p class="card-text">
+                                ResumW Project is a modern Django application built with best practices. 
+                                It demonstrates clean architecture, responsive design, and follows Django conventions.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-code text-success me-2"></i>
+                                Technology Stack
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Django 5.2.5</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Python 3.11+</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Bootstrap 5.3</li>
+                                <li><i class="fas fa-check text-success me-2"></i>SQLite Database</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-5">
+                <h3 class="mb-4">Features</h3>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-rocket text-primary mt-1 me-3"></i>
+                            <div>
+                                <h6>Fast Performance</h6>
+                                <p class="text-muted small">Optimized for speed and efficiency with Django's powerful framework.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-mobile-alt text-info mt-1 me-3"></i>
+                            <div>
+                                <h6>Responsive Design</h6>
+                                <p class="text-muted small">Works perfectly on all devices and screen sizes.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-shield-alt text-success mt-1 me-3"></i>
+                            <div>
+                                <h6>Secure</h6>
+                                <p class="text-muted small">Built-in security features protect your data and users.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-cogs text-warning mt-1 me-3"></i>
+                            <div>
+                                <h6>Easy to Extend</h6>
+                                <p class="text-muted small">Modular architecture makes it easy to add new features.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-5 text-center">
+                <h3 class="mb-4">Get Started</h3>
+                <p class="text-muted mb-4">Ready to explore the application? Start by browsing templates or go back to the home page.</p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="{% url 'main:templates' %}" class="btn btn-primary">
+                        <i class="fas fa-palette me-2"></i>Browse Templates
+                    </a>
+                    <a href="{% url 'main:home' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-home me-2"></i>Go Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

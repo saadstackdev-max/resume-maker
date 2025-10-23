@@ -1,0 +1,639 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-edit me-2"></i>Resume Editor
+                    </h5>
+                    <p class="text-muted small">{{ resume.title }}</p>
+                    
+                    <div class="d-grid gap-2 mb-4">
+                        <a href="{% url 'main:view_resume' resume.id %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-eye me-1"></i>Preview
+                        </a>
+                        <a href="{% url 'main:export_resume_pdf' resume.id %}" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-download me-1"></i>Download PDF
+                        </a>
+                    </div>
+                    
+                    <div class="list-group list-group-flush">
+                        <a href="#personal-info" class="list-group-item list-group-item-action">
+                            <i class="fas fa-user me-2"></i>Personal Info
+                        </a>
+                        <a href="#experience" class="list-group-item list-group-item-action">
+                            <i class="fas fa-briefcase me-2"></i>Experience
+                        </a>
+                        <a href="#education" class="list-group-item list-group-item-action">
+                            <i class="fas fa-graduation-cap me-2"></i>Education
+                        </a>
+                        <a href="#skills" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tools me-2"></i>Skills
+                        </a>
+                        <a href="#projects" class="list-group-item list-group-item-action">
+                            <i class="fas fa-project-diagram me-2"></i>Projects
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <!-- Resume Settings -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-cog me-2"></i>Resume Settings
+                    </h5>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.title.label_tag }}
+                                {{ form.title }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.template.label_tag }}
+                                {{ form.template }}
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">
+                            <i class="fas fa-save me-1"></i>Save Changes
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            {% if suggestions %}
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <strong><i class="fas fa-lightbulb me-2 text-warning"></i>Suggestions</strong>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        {% for s in suggestions %}
+                        <li class="mb-1">{{ s }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Personal Information -->
+            <div class="card mb-4" id="personal-info">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user me-2"></i>Personal Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="personal-info-form">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-control" name="first_name" value="{{ personal_info.first_name|default:'' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-control" name="last_name" value="{{ personal_info.last_name|default:'' }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" value="{{ personal_info.email|default:'' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Phone</label>
+                                <input type="text" class="form-control" name="phone" value="{{ personal_info.phone|default:'' }}">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            <textarea class="form-control" name="address" rows="2">{{ personal_info.address|default:'' }}</textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-control" name="city" value="{{ personal_info.city|default:'' }}">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">State</label>
+                                <input type="text" class="form-control" name="state" value="{{ personal_info.state|default:'' }}">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">ZIP Code</label>
+                                <input type="text" class="form-control" name="zip_code" value="{{ personal_info.zip_code|default:'' }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">LinkedIn</label>
+                                <input type="url" class="form-control" name="linkedin" value="{{ personal_info.linkedin|default:'' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Website</label>
+                                <input type="url" class="form-control" name="website" value="{{ personal_info.website|default:'' }}">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Professional Summary</label>
+                            <textarea class="form-control" name="summary" rows="4" placeholder="Write a brief professional summary...">{{ personal_info.summary|default:'' }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-1"></i>Save Personal Info
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Experience -->
+            <div class="card mb-4" id="experience">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-briefcase me-2"></i>Professional Experience
+                    </h5>
+                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addExperienceModal">
+                        <i class="fas fa-plus me-1"></i>Add Experience
+                    </button>
+                </div>
+                <div class="card-body">
+                    {% if experiences %}
+                        {% for experience in experiences %}
+                        <div class="experience-item border rounded p-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">{{ experience.position }}</h6>
+                                    <p class="text-primary mb-1">{{ experience.company }}</p>
+                                    <small class="text-muted">
+                                        {{ experience.start_date|date:"M Y" }} - 
+                                        {% if experience.current %}Present{% else %}{{ experience.end_date|date:"M Y" }}{% endif %}
+                                        {% if experience.location %} | {{ experience.location }}{% endif %}
+                                    </small>
+                                </div>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-primary">Edit</button>
+                                    <button class="btn btn-outline-danger">Delete</button>
+                                </div>
+                            </div>
+                            <p class="mt-2 mb-0">{{ experience.description }}</p>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center py-3">No experience added yet. Click "Add Experience" to get started.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Education -->
+            <div class="card mb-4" id="education">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-graduation-cap me-2"></i>Education
+                    </h5>
+                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addEducationModal">
+                        <i class="fas fa-plus me-1"></i>Add Education
+                    </button>
+                </div>
+                <div class="card-body">
+                    {% if education %}
+                        {% for edu in education %}
+                        <div class="education-item border rounded p-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">{{ edu.degree }}</h6>
+                                    <p class="text-primary mb-1">{{ edu.institution }}</p>
+                                    <small class="text-muted">
+                                        {{ edu.start_date|date:"M Y" }} - 
+                                        {% if edu.current %}Present{% else %}{{ edu.end_date|date:"M Y" }}{% endif %}
+                                        {% if edu.location %} | {{ edu.location }}{% endif %}
+                                    </small>
+                                </div>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-primary">Edit</button>
+                                    <button class="btn btn-outline-danger">Delete</button>
+                                </div>
+                            </div>
+                            {% if edu.field_of_study or edu.gpa or edu.description %}
+                            <div class="mt-2">
+                                {% if edu.field_of_study %}<p class="mb-1"><strong>Field:</strong> {{ edu.field_of_study }}</p>{% endif %}
+                                {% if edu.gpa %}<p class="mb-1"><strong>GPA:</strong> {{ edu.gpa }}</p>{% endif %}
+                                {% if edu.description %}<p class="mb-0">{{ edu.description }}</p>{% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center py-3">No education added yet. Click "Add Education" to get started.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="card mb-4" id="skills">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tools me-2"></i>Skills
+                    </h5>
+                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSkillModal">
+                        <i class="fas fa-plus me-1"></i>Add Skill
+                    </button>
+                </div>
+                <div class="card-body">
+                    {% if skills %}
+                        <div class="row">
+                            {% for skill in skills %}
+                            <div class="col-md-6 mb-2">
+                                <div class="d-flex justify-content-between align-items-center p-2 border rounded">
+                                    <span>{{ skill.name }}</span>
+                                    <div>
+                                        <span class="badge bg-primary me-2">{{ skill.get_level_display }}</span>
+                                        <button class="btn btn-outline-danger btn-sm">×</button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center py-3">No skills added yet. Click "Add Skill" to get started.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Projects -->
+            <div class="card mb-4" id="projects">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-project-diagram me-2"></i>Projects
+                    </h5>
+                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProjectModal">
+                        <i class="fas fa-plus me-1"></i>Add Project
+                    </button>
+                </div>
+                <div class="card-body">
+                    {% if projects %}
+                        {% for project in projects %}
+                        <div class="project-item border rounded p-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">{{ project.title }}</h6>
+                                    {% if project.technologies %}
+                                    <p class="text-primary mb-1">{{ project.technologies }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-primary">Edit</button>
+                                    <button class="btn btn-outline-danger">Delete</button>
+                                </div>
+                            </div>
+                            <p class="mt-2 mb-2">{{ project.description }}</p>
+                            {% if project.url or project.github_url %}
+                            <div class="mt-2">
+                                {% if project.url %}<a href="{{ project.url }}" target="_blank" class="btn btn-outline-primary btn-sm me-2">Live Demo</a>{% endif %}
+                                {% if project.github_url %}<a href="{{ project.github_url }}" target="_blank" class="btn btn-outline-secondary btn-sm">GitHub</a>{% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center py-3">No projects added yet. Click "Add Project" to get started.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Experience Modal -->
+<div class="modal fade" id="addExperienceModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Experience</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-experience-form">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Job Title</label>
+                            <input type="text" class="form-control" name="position" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Company</label>
+                            <input type="text" class="form-control" name="company" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" class="form-control" name="start_date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">End Date</label>
+                            <input type="date" class="form-control" name="end_date">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Location</label>
+                        <input type="text" class="form-control" name="location">
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="current" id="currentJob">
+                            <label class="form-check-label" for="currentJob">
+                                This is my current position
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="4" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="add-experience-form" class="btn btn-primary">Add Experience</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Education Modal -->
+<div class="modal fade" id="addEducationModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Education</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-education-form">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Degree</label>
+                            <input type="text" class="form-control" name="degree" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Institution</label>
+                            <input type="text" class="form-control" name="institution" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Field of Study</label>
+                            <input type="text" class="form-control" name="field_of_study">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" name="location">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" class="form-control" name="start_date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">End Date</label>
+                            <input type="date" class="form-control" name="end_date">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">GPA</label>
+                            <input type="number" class="form-control" name="gpa" step="0.01" min="0" max="4">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox" name="current" id="currentEducation">
+                                <label class="form-check-label" for="currentEducation">
+                                    Currently studying here
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="add-education-form" class="btn btn-primary">Add Education</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Skill Modal -->
+<div class="modal fade" id="addSkillModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Skill</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-skill-form">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Skill Name</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Proficiency Level</label>
+                        <select class="form-select" name="level" required>
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                            <option value="expert">Expert</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="add-skill-form" class="btn btn-primary">Add Skill</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Project Modal -->
+<div class="modal fade" id="addProjectModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-project-form">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Project Title</label>
+                        <input type="text" class="form-control" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Technologies Used</label>
+                            <input type="text" class="form-control" name="technologies">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Live Demo URL</label>
+                            <input type="url" class="form-control" name="url">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">GitHub URL</label>
+                        <input type="url" class="form-control" name="github_url">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" class="form-control" name="start_date">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">End Date</label>
+                            <input type="date" class="form-control" name="end_date">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="add-project-form" class="btn btn-primary">Add Project</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Personal Info Form Submission
+document.getElementById('personal-info-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    fetch('{% url "main:save_personal_info" resume.id %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Personal information saved successfully!');
+        } else {
+            alert('Error saving personal information');
+        }
+    });
+});
+
+// Add Experience Form
+document.getElementById('add-experience-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    fetch('{% url "main:add_experience" resume.id %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            location.reload();
+        } else {
+            alert('Error adding experience');
+        }
+    });
+});
+
+// Add Education Form
+document.getElementById('add-education-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    fetch('{% url "main:add_education" resume.id %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            location.reload();
+        } else {
+            alert('Error adding education');
+        }
+    });
+});
+
+// Add Skill Form
+document.getElementById('add-skill-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    fetch('{% url "main:add_skill" resume.id %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            location.reload();
+        } else {
+            alert('Error adding skill');
+        }
+    });
+});
+
+// Add Project Form
+document.getElementById('add-project-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    fetch('{% url "main:add_project" resume.id %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            location.reload();
+        } else {
+            alert('Error adding project');
+        }
+    });
+});
+</script>
+{% endblock %}
