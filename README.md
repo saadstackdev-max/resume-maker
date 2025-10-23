@@ -24,7 +24,7 @@ A professional Django application for creating beautiful and professional resume
 
 ### Prerequisites
 
-- Python 3.11 or higher
+- Python 3.12 or higher
 - pip (Python package installer)
 
 ### Installation
